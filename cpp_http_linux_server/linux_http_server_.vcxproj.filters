@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="headers">
+      <UniqueIdentifier>{745cb519-2936-4e62-a863-046317a498bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="initDataEnv">
+      <UniqueIdentifier>{30c5cff1-61a8-43b9-b1ce-fc0335903057}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="httpServer">
+      <UniqueIdentifier>{5bfc3dff-0102-4af5-bf4a-06ead0a39baf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sql_module">
+      <UniqueIdentifier>{d302902f-32a2-4648-9d84-48b10885b508}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="jsonConvert">
+      <UniqueIdentifier>{cb416bc6-d5cf-428c-806d-ebd035cf086d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="headers\mainApp.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="initDataEnv\initDataEnv.h">
+      <Filter>initDataEnv</Filter>
+    </ClInclude>
+    <ClInclude Include="httpServer\httpServer.h">
+      <Filter>httpServer</Filter>
+    </ClInclude>
+    <ClInclude Include="httpServer\routerFunc.h">
+      <Filter>httpServer</Filter>
+    </ClInclude>
+    <ClInclude Include="sql_module\sql_module.h">
+      <Filter>sql_module</Filter>
+    </ClInclude>
+    <ClInclude Include="jsonConvert\jsonConv.h">
+      <Filter>jsonConvert</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="initDataEnv\initDataEnv.cpp">
+      <Filter>initDataEnv</Filter>
+    </ClCompile>
+    <ClCompile Include="mainApp.cpp" />
+    <ClCompile Include="httpServer\httpServer.cpp">
+      <Filter>httpServer</Filter>
+    </ClCompile>
+    <ClCompile Include="httpServer\routerFunc.cpp">
+      <Filter>httpServer</Filter>
+    </ClCompile>
+    <ClCompile Include="sql_module\sql_module.cpp">
+      <Filter>sql_module</Filter>
+    </ClCompile>
+    <ClCompile Include="jsonConvert\jsonConv.cpp">
+      <Filter>jsonConvert</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
