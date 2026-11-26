@@ -117,3 +117,9 @@ W trybie `minimize` kliknięcie przycisku wywołuje `ShowWindow` z flagą `SW_MI
 - Utwórz obiekt kontrolki za pomocą `new`. Po utworzeniu jej okna procedura obsługi `WM_DESTROY` sama usuwa obiekt C++. Zachowany wskaźnik jest ważny tylko do chwili zniszczenia okna kontrolki. Jeśli chcesz ją usunąć wcześniej, wywołaj `DestroyWindow` na jej `MainWND`.
 - `CheckBox::CreateControl` i `ButtonControl::CreateControl` zwracają `0` również wtedy, gdy utworzenie okna się nie powiedzie. Wynik sprawdzisz przez `MainWND`, jak w przykładzie z polem wyboru.
 - Do `ButtonControl` przekaż dwie osobne bitmapy w rozmiarze przycisku. Kontrolka zwalnia ich uchwyty przy niszczeniu. Podobnie `Sys_Button`, `MenuButton` i `StaticText` zwalniają przekazane im pędzle tła. Każdej kontrolce przydziel własne zasoby GDI.
+
+## Licencja
+
+Projekt jest udostępniany na licencji MIT. Pełna treść licencji znajduje się w pliku [LICENSE](LICENSE). Licencja pozwala używać, modyfikować i rozpowszechniać kod, również komercyjnie, pod warunkiem zachowania informacji o prawach autorskich i treści licencji.
+
+Licencje zewnętrznych bibliotek i narzędzi używanych przez projekt pozostają niezależne od licencji tego repozytorium.
