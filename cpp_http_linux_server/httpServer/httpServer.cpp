@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <sys/select.h>
 #include <sys/time.h>
+#include <sys/ioctl.h>
 #include "httpServer.h"
 #include "../headers/mainApp.h"
 
@@ -79,13 +80,12 @@ int listenSocket(int s1_, http_server * httpServer)
 {
     sockaddr_in sa2;
     int s2=0;
-    int recvLen = 0;
     unsigned int len = 0;
     pthread_t pt;
     //timespec sleepTime = { 0,100000000 }; // 10 request per 1 scond limit
     useconds_t usec = 1000;
 
-    char buffer[MAX_REQ_RESP_BUFFER];
+    //char buffer[MAX_REQ_RESP_BUFFER];
 
     while (1)
     {
@@ -105,21 +105,14 @@ int listenSocket(int s1_, http_server * httpServer)
                 break;
             }
 
-            memset(buffer, 0, MAX_REQ_RESP_BUFFER);
-
-            recvLen = recv(s2, buffer, MAX_REQ_RESP_BUFFER, 0);
-            if (recvLen > 0)
-            {
                 requestThread * rT = (requestThread*)calloc(1,sizeof(requestThread));
-                rT->sr.recvLen = recvLen;
                 rT->sr.socket = s2;
                 memcpy(&rT->sr.sAddr, &sa2, sizeof(sa2));
-                memcpy(rT->sr.buffer, buffer, recvLen);
                 rT->httpServer = httpServer;
 
                 pthread_create(&pt, NULL, processRequest, (void*)rT);
                 
-            }
+            //}
         }
         else break;
     }
@@ -140,6 +133,10 @@ void * processRequest(void * args)
     int i = 0;
     int licznik = 0;
     char * host = NULL;
+    int recvLen = 0;
+    int isRecv = 0;
+    int s2 = rT->sr.socket;
+    char buffer[MAX_REQ_RESP_BUFFER];
 
     lock_guard<mutex> * processReqMutex = new lock_guard<mutex>(httpS->requestMutex);
 
@@ -150,47 +147,60 @@ void * processRequest(void * args)
   /*  httpS->requestMutex.unlock();*/
 
     delete (processReqMutex);
- 
-    req = (request *) calloc(1,sizeof(request));
+
+    memset(buffer, 0, MAX_REQ_RESP_BUFFER);
+
+    ioctl(s2, FIONREAD, & isRecv);
+
+    if(isRecv > 0)
+        recvLen = recv(s2, buffer, MAX_REQ_RESP_BUFFER, 0);
+
+    if (recvLen > 0)
+    {
+        memcpy(rT->sr.buffer, buffer, recvLen);
+        rT->sr.recvLen = recvLen;
+
+        req = (request *) calloc(1,sizeof(request));
   
-    req->bodyBuffer = NULL;
-    req->headers = NULL;
-    req->params = NULL;
+        req->bodyBuffer = NULL;
+        req->headers = NULL;
+        req->params = NULL;
 
-    /*  printf("\033[22;033m");
-    printf("\n\n");
-    printf("%s", rT->sr.buffer);
-    printf("\033[22;0m");
-    printf("\n\n");
-    cout.flush();*/
+        /*  printf("\033[22;033m");
+        printf("\n\n");
+        printf("%s", rT->sr.buffer);
+        printf("\033[22;0m");
+        printf("\n\n");
+        cout.flush();*/
 
-    req->max_requestHeaders_count = MAX_REQUEST_HEADER;
+        req->max_requestHeaders_count = MAX_REQUEST_HEADER;
 
-    req->max_requestParams_count = MAX_REQUEST_PARAMS;
+        req->max_requestParams_count = MAX_REQUEST_PARAMS;
 
-    ret = requestParse(rT->sr.buffer, rT->sr.recvLen, req);
+        ret = requestParse(rT->sr.buffer, rT->sr.recvLen, req);
 
-    if (ret != 0)
-    {
-        send_serverError(rT->sr.socket, rT->sr.sAddr, req, 500, "Bad Getway", 10);
+        if (ret != 0)
+        {
+            send_serverError(rT->sr.socket, rT->sr.sAddr, req, 500, "Bad Getway", 10);
 
-        clearRequestPointers(req);
+            clearRequestPointers(req);
 
-        /*delete(req);*/
+            /*delete(req);*/
 
-        free(req);
-        req = NULL;
+            free(req);
+            req = NULL;
 
-        close(rT->sr.socket);
+            close(rT->sr.socket);
 
-    }
-    else 
-    {
-        host = inet_ntoa(rT->sr.sAddr.sin_addr);
-        strcpy(req->host, host);
+        }
+        else 
+        {
+            host = inet_ntoa(rT->sr.sAddr.sin_addr);
+            strcpy(req->host, host);
 
-        requestRoute(rT->sr.socket, rT->sr.sAddr, req, currentThread);
+            requestRoute(rT->sr.socket, rT->sr.sAddr, req, currentThread);
 
+        }
     }
  
     free(args);
